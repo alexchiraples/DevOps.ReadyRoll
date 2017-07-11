@@ -46,6 +46,8 @@ ecf74ec8-fdd4-520b-bf23-d875d9158861|Programmable Objects\HumanResources\Stored 
 2b483dab-b69f-56d7-88c8-640ee915791c|Programmable Objects\HumanResources\Stored Procedures\uspUpdateEmployeePersonalInfo.sql;
 </DeployChangesExecutionOrder>
     <SyncToOfflineSchemaModel>False</SyncToOfflineSchemaModel>
+    <GenerateOctopusNuPkg>True</GenerateOctopusNuPkg>
+    <OctoOptionDeployToLocalInstance>True</OctoOptionDeployToLocalInstance>
   </PropertyGroup>
   <!-- READYROLL OFFLINE SCHEMA MODEL OPTIONS -->
   <PropertyGroup>
@@ -231,6 +233,7 @@ ecf74ec8-fdd4-520b-bf23-d875d9158861|Programmable Objects\HumanResources\Stored 
   </ItemGroup>
   <ItemGroup>
     <None Include="Pre-Deployment\01_Create_Database.sql" />
+    <None Include="DevOps.ReadyRoll.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Post-Deployment\01_Finalize_Deployment.sql" />
@@ -288,5 +291,12 @@ ecf74ec8-fdd4-520b-bf23-d875d9158861|Programmable Objects\HumanResources\Stored 
   </ItemGroup>
   <ItemGroup>
     <None Include="Migrations\1.0.1-TestRun\003_change_column_type.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <SqlCmdVariable Include="DatabaseServer">
+      <DefaultValue>
+      </DefaultValue>
+      <Value>$(SqlCmdVar__1)</Value>
+    </SqlCmdVariable>
   </ItemGroup>
 </Project>
