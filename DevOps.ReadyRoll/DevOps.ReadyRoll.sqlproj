@@ -299,4 +299,7 @@ ecf74ec8-fdd4-520b-bf23-d875d9158861|Programmable Objects\HumanResources\Stored 
       <Value>$(SqlCmdVar__1)</Value>
     </SqlCmdVariable>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Migrations\1.0.1-TestRun\004_new_table.sql" />
+  </ItemGroup>
 </Project>
