@@ -22,7 +22,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
-    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <TargetDatabaseSet>True</TargetDatabaseSet>  
     <SyncToOfflineSchemaModel>True</SyncToOfflineSchemaModel>
     <DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>
     <QueryStoreCaptureMode>All</QueryStoreCaptureMode>
@@ -97,6 +97,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
     <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
@@ -117,6 +118,7 @@
   </PropertyGroup>
   <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="Exists('DacpacDataMigrations.targets')" Project="DacpacDataMigrations.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Production\" />
@@ -146,6 +148,10 @@
     <Folder Include="HumanResources\XMLSchemaCollections\" />
     <Folder Include="Production\XMLSchemaCollections\" />
     <Folder Include="Sales\XMLSchemaCollections\" />
+    <Folder Include="dbo\Tables" />
+    <Folder Include="Migrations" />
+    <Folder Include="Migrations\PostDeploy" />
+    <Folder Include="Migrations\PreDeploy" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Production\Tables\ScrapReason.sql" />
@@ -279,5 +285,18 @@
     <Build Include="Sales\XMLSchemaCollections\StoreSurveySchemaCollection.sql" />
     <Build Include="Security\Permissions.sql" />
     <Build Include="ExtendedProperties.sql" />
+    <Build Include="dbo\Tables\TestAddVS.sql" />
+    <None Include="Migrations\PostDeploy\0001 Split column.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Migrations\PreDeploy\0001 Split Column prepare.sql" />
+    <None Include="Security\__Migration.sql" />
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [Person].[Address] (
     [AddressID]       INT               IDENTITY (1, 1) NOT FOR REPLICATION NOT NULL,
-    [AddressLine1]    NVARCHAR (60)     NOT NULL,
     [AddressLine2]    NVARCHAR (60)     NULL,
+    [AddressLIne3]    NVARCHAR (60)     NULL,
     [City]            NVARCHAR (30)     NOT NULL,
     [StateProvinceID] INT               NOT NULL,
     [PostalCode]      NVARCHAR (15)     NOT NULL,
@@ -19,8 +19,8 @@ CREATE UNIQUE NONCLUSTERED INDEX [AK_Address_rowguid]
 
 
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_Address_AddressLine1_AddressLine2_City_StateProvinceID_PostalCode]
-    ON [Person].[Address]([AddressLine1] ASC, [AddressLine2] ASC, [City] ASC, [StateProvinceID] ASC, [PostalCode] ASC);
+--CREATE UNIQUE NONCLUSTERED INDEX [IX_Address_AddressLine1_AddressLine2_City_StateProvinceID_PostalCode]
+--    ON [Person].[Address]([AddressLine3] ASC, [AddressLine2] ASC, [City] ASC, [StateProvinceID] ASC, [PostalCode] ASC);
 
 
 GO
@@ -33,7 +33,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Unique nonc
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nonclustered index.', @level0type = N'SCHEMA', @level0name = N'Person', @level1type = N'TABLE', @level1name = N'Address', @level2type = N'INDEX', @level2name = N'IX_Address_AddressLine1_AddressLine2_City_StateProvinceID_PostalCode';
+--EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Nonclustered index.', @level0type = N'SCHEMA', @level0name = N'Person', @level1type = N'TABLE', @level1name = N'Address', @level2type = N'INDEX', @level2name = N'IX_Address_AddressLine1_AddressLine2_City_StateProvinceID_PostalCode';
 
 
 GO
@@ -49,7 +49,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Primary key
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'First street address line.', @level0type = N'SCHEMA', @level0name = N'Person', @level1type = N'TABLE', @level1name = N'Address', @level2type = N'COLUMN', @level2name = N'AddressLine1';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'First street address line.', @level0type = N'SCHEMA', @level0name = N'Person', @level1type = N'TABLE', @level1name = N'Address', @level2type = N'COLUMN', @level2name = N'AddressLine3';
 
 
 GO

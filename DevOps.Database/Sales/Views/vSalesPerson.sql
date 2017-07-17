@@ -13,7 +13,7 @@ SELECT
 	,pnt.[Name] AS [PhoneNumberType]
     ,ea.[EmailAddress]
     ,p.[EmailPromotion]
-    ,a.[AddressLine1]
+    ,a.[AddressLine3]
     ,a.[AddressLine2]
     ,a.[City]
     ,[StateProvinceName] = sp.[Name]

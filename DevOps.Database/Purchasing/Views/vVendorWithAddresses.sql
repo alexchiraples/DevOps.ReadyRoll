@@ -4,7 +4,7 @@ SELECT
     v.[BusinessEntityID]
     ,v.[Name]
     ,at.[Name] AS [AddressType]
-    ,a.[AddressLine1] 
+    ,a.[AddressLine3] 
     ,a.[AddressLine2] 
     ,a.[City] 
     ,sp.[Name] AS [StateProvinceName] 
