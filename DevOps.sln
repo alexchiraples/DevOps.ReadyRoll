@@ -9,6 +9,10 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "DevOps.Database", "DevOps.D
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "DevOps.Template", "DevOps.Template\DevOps.Template.sqlproj", "{81DA31F7-9700-4730-9363-12CDE8988FAD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared Projects", "Shared Projects", "{CA5D0785-C547-4E4F-B9C6-09B21912CD54}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "DevOps.Ref.Database", "..\DevOps.Ref\DevOps.Ref.Database\DevOps.Ref.Database.sqlproj", "{46B354B0-887B-43D3-9EB2-931CF42410B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,8 +37,17 @@ Global
 		{81DA31F7-9700-4730-9363-12CDE8988FAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81DA31F7-9700-4730-9363-12CDE8988FAD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{81DA31F7-9700-4730-9363-12CDE8988FAD}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{46B354B0-887B-43D3-9EB2-931CF42410B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46B354B0-887B-43D3-9EB2-931CF42410B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46B354B0-887B-43D3-9EB2-931CF42410B5}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{46B354B0-887B-43D3-9EB2-931CF42410B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46B354B0-887B-43D3-9EB2-931CF42410B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46B354B0-887B-43D3-9EB2-931CF42410B5}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{46B354B0-887B-43D3-9EB2-931CF42410B5} = {CA5D0785-C547-4E4F-B9C6-09B21912CD54}
 	EndGlobalSection
 EndGlobal
