@@ -7,6 +7,8 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "DevOps.ReadyRoll", "DevOps.
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "DevOps.Database", "DevOps.Database\DevOps.Database.sqlproj", "{5DDCAFF2-8EFF-4A8C-BD59-0A2B13408786}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "DevOps.Template", "DevOps.Template\DevOps.Template.sqlproj", "{81DA31F7-9700-4730-9363-12CDE8988FAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,12 @@ Global
 		{5DDCAFF2-8EFF-4A8C-BD59-0A2B13408786}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DDCAFF2-8EFF-4A8C-BD59-0A2B13408786}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5DDCAFF2-8EFF-4A8C-BD59-0A2B13408786}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{81DA31F7-9700-4730-9363-12CDE8988FAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81DA31F7-9700-4730-9363-12CDE8988FAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81DA31F7-9700-4730-9363-12CDE8988FAD}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{81DA31F7-9700-4730-9363-12CDE8988FAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81DA31F7-9700-4730-9363-12CDE8988FAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81DA31F7-9700-4730-9363-12CDE8988FAD}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

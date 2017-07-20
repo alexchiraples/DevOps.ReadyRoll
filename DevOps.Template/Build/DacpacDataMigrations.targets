@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <Choose>
+    <When Condition="'$(MSBuildToolsVersion)'=='14.0' Or '$(MSBuildToolsVersion)'=='15.0' ">
+      <PropertyGroup>
+        <TasksAssemblyName>Microsoft.Build.Tasks.Core</TasksAssemblyName>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <TasksAssemblyName>Microsoft.Build.Tasks.v$(MSBuildToolsVersion)</TasksAssemblyName>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <UsingTask TaskName="SortItemGroup" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\$(TasksAssemblyName).dll">
+    <ParameterGroup>
+      <In ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <Out ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Class" Language="cs" Source="$(MSBuildThisFileDirectory)\SortItemGroup.cs" />
+    </Task>
+  </UsingTask>
+
+  <PropertyGroup>
+    <DacpacDataMigrationsSchema Condition="'$(DacpacDataMigrationsSchema)'==''">__</DacpacDataMigrationsSchema>
+    <DacpacDataMigrationsTableName Condition="'$(DacpacDataMigrationsTableName)'==''">Migrations</DacpacDataMigrationsTableName>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <_SortMigrationFilesNumericOrder>true</_SortMigrationFilesNumericOrder>
+    <_SortMigrationFilesNumericOrder Condition="'$(SortMigrationFilesNumericOrder)' == 'false'">false</_SortMigrationFilesNumericOrder>
+    <_MigrationsSchema>$(DacpacDataMigrationsSchema)</_MigrationsSchema>
+    <_MigrationsTable>$(_MigrationsSchema).$(DacpacDataMigrationsTableName)</_MigrationsTable>
+    <_MigrationNameLength>255</_MigrationNameLength>
+    <_BaseDirectory>$(MSBuildProjectDirectory)\obj\$(Configuration)</_BaseDirectory>
+    <_MigrationsRootFolder>$(MSBuildProjectDirectory)\Migrations</_MigrationsRootFolder>
+    <_MigrationsRootFolderPre>$(MSBuildProjectDirectory)\Migrations\Pre-Deploy</_MigrationsRootFolderPre>
+    <_MigrationsRootFolderPost>$(MSBuildProjectDirectory)\Migrations\Post-Deploy</_MigrationsRootFolderPost>
+    <_StaticData>$(MSBuildProjectDirectory)\StaticData</_StaticData>
+    <_SetupFile>$(_BaseDirectory)\DacpacDataMigrationsSetup.sql</_SetupFile>
+    <_OutputFilePre>$(_BaseDirectory)\DataMigrationsPre.sql</_OutputFilePre>
+    <_OutputFilePost>$(_BaseDirectory)\DataMigrationsPost.sql</_OutputFilePost>
+    <_OutputFileStatic>$(_BaseDirectory)\StaticData.sql</_OutputFileStatic>
+    <_SetupScript>
+      IF (SELECT SCHEMA_ID('$(_MigrationsSchema)')) IS NULL
+      BEGIN
+      EXEC ('CREATE SCHEMA $(_MigrationsSchema)')
+      END
+
+      IF (SELECT OBJECT_ID('$(_MigrationsTable)')) IS NULL
+      BEGIN
+      CREATE TABLE $(_MigrationsTable)
+      (
+      Name NVARCHAR($(_MigrationNameLength)) PRIMARY KEY NOT NULL,
+      Datetime DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+      )
+      END
+    </_SetupScript>
+    <_OutputScript>
+      -- OutputScript
+    </_OutputScript>
+    <_PreDeploymentScript>
+      :r ".\$([MSBuild]::MakeRelative($(_BaseDirectory), $(_SetupFile)))"
+      :r ".\$([MSBuild]::MakeRelative($(_BaseDirectory), $(_OutputFilePre)))"
+    </_PreDeploymentScript>
+    <_PostDeploymentScript>
+      :r ".\$([MSBuild]::MakeRelative($(_BaseDirectory), $(_OutputFilePost)))"
+      :r ".\$([MSBuild]::MakeRelative($(_BaseDirectory), $(_OutputFileStatic)))"
+    </_PostDeploymentScript>
+    <_CommitScript>
+
+      COMMIT TRANSACTION;
+      GO;
+    </_CommitScript>
+    <_OpenTransactionScript>
+      SET XACT_ABORT ON;
+      BEGIN TRANSACTION;
+      GO;
+    </_OpenTransactionScript>
+
+    <_PreDeploymentScriptFile>$(_BaseDirectory)\Script.PreDeployment.sql</_PreDeploymentScriptFile>
+    <_PostDeploymentScriptFile>$(_BaseDirectory)\Script.PostDeployment.sql</_PostDeploymentScriptFile>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PreDeploy Include="$(_PreDeploymentScriptFile)" />
+    <PostDeploy Include="$(_PostDeploymentScriptFile)" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <DacpacDataMigrationsDependsOn>
+      SetupProject;
+      SetupStaticScripts;
+      AddOpenTransactionScript;
+      AddPreMigrationScripts;
+      AddPostMigrationScripts;
+      AddCommitScript;
+      AddPreDeployScripts;
+      AddPostDeployScripts;
+    </DacpacDataMigrationsDependsOn>
+  </PropertyGroup>
+
+  <Target Name="DataMigrations" BeforeTargets="BeforeBuild" DependsOnTargets="$(DacpacDataMigrationsDependsOn)" />
+  <Target Name="SetupStaticScripts" Inputs="@(_StaticD)" Outputs="%(Identity).Dummy">
+    <PropertyGroup>
+      <_Name>$([System.IO.Path]::ChangeExtension($([MSBuild]::MakeRelative( $(_StaticData), %(_StaticD.FullPath))), null))</_Name>
+      <_Path>".\$([MSBuild]::MakeRelative($(_BaseDirectory), %(_StaticD.FullPath)))"</_Path>
+      <_Script>
+        PRINT N'Applying static script ''$(_Name)'''
+
+        :r $(_Path)
+      </_Script>
+    </PropertyGroup>
+    <Message Text="Adding Static Data '$(_Name)' to file $(_OutputFileStatic)" />
+    <WriteLinesToFile File="$(_OutputFileStatic)" Overwrite="false" Lines="$(_Script)" />
+
+  </Target>
+  <Target Name="AddPreMigrationScripts" Inputs="@(_MigrationPre)" Outputs="%(Identity).Dummy">
+    <PropertyGroup>
+      <_Name>$([System.IO.Path]::ChangeExtension($([MSBuild]::MakeRelative( $(_MigrationsRootFolderPre), %(_MigrationPre.FullPath))), null))</_Name>
+      <_Path>".\$([MSBuild]::MakeRelative($(_BaseDirectory), %(_MigrationPre.FullPath)))"</_Path>
+    </PropertyGroup>
+
+    <Message Text="Adding pre deploy '$(_Name)' to file $(_OutputFilePre)" />
+
+    <PropertyGroup>
+      <_Script>
+        IF NOT EXISTS(SELECT 1 FROM $(_MigrationsTable) WHERE Name = '$(_Name)')
+        BEGIN
+        PRINT N'Applying migration ''$(_Name)'''
+        :r $(_Path)
+        INSERT INTO $(_MigrationsTable) VALUES ('$(_Name)', SYSDATETIME())
+        END
+        GO;
+      </_Script>
+    </PropertyGroup>
+
+    <WriteLinesToFile File="$(_OutputFilePre)" Overwrite="false" Lines="$(_Script)" />
+  </Target>
+
+  <Target Name="AddPostMigrationScripts" Inputs="@(_MigrationPost)" Outputs="%(Identity).Dummy">
+    <PropertyGroup>
+      <_Name>$([System.IO.Path]::ChangeExtension($([MSBuild]::MakeRelative( $(_MigrationsRootFolderPost), %(_MigrationPost.FullPath))), null))</_Name>
+      <_Path>".\$([MSBuild]::MakeRelative($(_BaseDirectory), %(_MigrationPost.FullPath)))"</_Path>
+    </PropertyGroup>
+
+    <Message Text="Adding post deploy '$(_Name)' to file $(_OutputFilePost)" />
+
+    <PropertyGroup>
+      <_Script>
+        IF NOT EXISTS(SELECT 1 FROM $(_MigrationsTable) WHERE Name = '$(_Name)')
+        BEGIN
+        PRINT N'Applying migration ''$(_Name)'''
+        :r $(_Path)
+        INSERT INTO $(_MigrationsTable) VALUES ('$(_Name)', SYSDATETIME())
+        END
+        GO;
+      </_Script>
+    </PropertyGroup>
+
+    <WriteLinesToFile File="$(_OutputFilePost)" Overwrite="false" Lines="$(_Script)" />
+  </Target>
+
+
+  <Target Name="AddPreDeployScripts" Inputs="@(_PreDeploy)" Outputs="%(Identity).Dummy">
+    <PropertyGroup>
+      <_Name>%(_PreDeploy.RecursiveDir)%(_PreDeploy.FileName)</_Name>
+      <_Path>".\$([MSBuild]::MakeRelative($(_BaseDirectory), %(_PreDeploy.FullPath)))"</_Path>
+    </PropertyGroup>
+
+    <Message Text="Adding post deploy '$(_Name)' to file $(_PreDeploymentScriptFile)" />
+
+    <PropertyGroup>
+      <_Script>
+        :r $(_Path)
+      </_Script>
+    </PropertyGroup>
+
+    <WriteLinesToFile File="$(_PreDeploymentScriptFile)" Overwrite="false" Lines="$(_Script)" />
+  </Target>
+
+  <Target Name="AddPostDeployScripts" Inputs="@(_PostDeploy)" Outputs="%(Identity).Dummy">
+    <PropertyGroup>
+      <_Name>%(_PostDeploy.RecursiveDir)%(_PostDeploy.FileName)</_Name>
+      <_Path>".\$([MSBuild]::MakeRelative($(_BaseDirectory), %(_PostDeploy.FullPath)))"</_Path>
+    </PropertyGroup>
+
+    <Message Text="Adding post deploy '$(_Name)' to file $(_PostDeploymentScriptFile)" />
+
+    <PropertyGroup>
+      <_Script>
+        :r $(_Path)
+      </_Script>
+    </PropertyGroup>
+
+    <WriteLinesToFile File="$(_PostDeploymentScriptFile)" Overwrite="false" Lines="$(_Script)" />
+  </Target>
+
+  <Target Name="SetupProject">
+    <MakeDir Directories="$(_MigrationsRootFolder)" Condition="!Exists('$(_MigrationsRootFolder)')" />
+    <MakeDir Directories="$(_BaseDirectory)" Condition="!Exists('$(_BaseDirectory)')" />
+    <ItemGroup>
+      <__MigrationPre Include="$(_MigrationsRootFolderPre)\**\*.sql" />
+      <_MigrationPre Include="@(__MigrationPre)" Condition="'$(_SortMigrationFilesNumericOrder)' == 'false'"/>
+      <__MigrationPost Include="$(_MigrationsRootFolderPost)\**\*.sql" />
+      <_MigrationPost Include="@(__MigrationPost)" Condition="'$(_SortMigrationFilesNumericOrder)' == 'false'"/>
+      <_StaticD Include="$(_StaticData)\**\*.sql" />
+    </ItemGroup>
+
+    <SortItemGroup In="@(__MigrationPre)" Condition="'$(_SortMigrationFilesNumericOrder)' == 'true'">
+      <Output TaskParameter="Out" ItemName="_MigrationPre"/>
+    </SortItemGroup>
+
+    <SortItemGroup In="@(__MigrationPost)" Condition="'$(_SortMigrationFilesNumericOrder)' == 'true'">
+      <Output TaskParameter="Out" ItemName="_MigrationPost"/>
+    </SortItemGroup>
+
+    <ItemGroup>
+      <_PreDeploy Include="$(MSBuildProjectDirectory)\PreDeploymentScript.sql" Condition="Exists('$(MSBuildProjectDirectory)\PreDeploymentScript.sql')" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_PostDeploy Include="$(MSBuildProjectDirectory)\PostDeploymentScript.sql" Condition="Exists('$(MSBuildProjectDirectory)\PostDeploymentScript.sql')"/>
+    </ItemGroup>
+
+    <Message Text="Writing migration setup file $(_SetupFile)" />
+    <WriteLinesToFile File="$(_SetupFile)" Overwrite="true" Lines="$(_SetupScript)" />
+
+    <Message Text="Writing beginning of migration output file $(_OutputFilePre)" />
+    <WriteLinesToFile File="$(_OutputFilePre)" Overwrite="true" Lines="$(_OutputScript)" />
+
+    <Message Text="Writing beginning of migration output file $(_OutputFilePost)" />
+    <WriteLinesToFile File="$(_OutputFilePost)" Overwrite="true" Lines="$(_OutputScript)" />
+
+    <Message Text="Writing beginning of static data output file $(_StaticData)" />
+    <WriteLinesToFile File="$(_OutputFileStatic)" Overwrite="true" Lines="$(_OutputScript)" />
+
+    <WriteLinesToFile File="$(_PreDeploymentScriptFile)" Overwrite="true" Lines="$(_PreDeploymentScript)" />
+    <WriteLinesToFile File="$(_PostDeploymentScriptFile)" Overwrite="true" Lines="$(_PostDeploymentScript)" />
+  </Target>
+  <Target Name="AddCommitScript">
+    <WriteLinesToFile File="$(_OutputFilePre)" Overwrite="false" Lines="$(_CommitScript)" />
+    <WriteLinesToFile File="$(_OutputFilePost)" Overwrite="false" Lines="$(_CommitScript)" />
+  </Target>
+  <Target Name="AddOpenTransactionScript">
+    <WriteLinesToFile File="$(_OutputFilePre)" Overwrite="false" Lines="$(_OpenTransactionScript)" />
+    <WriteLinesToFile File="$(_OutputFilePost)" Overwrite="false" Lines="$(_OpenTransactionScript)" />
+  </Target>
+</Project>

@@ -22,7 +22,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
-    <TargetDatabaseSet>True</TargetDatabaseSet>  
+    <TargetDatabaseSet>True</TargetDatabaseSet>
     <SyncToOfflineSchemaModel>True</SyncToOfflineSchemaModel>
     <DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>
     <QueryStoreCaptureMode>All</QueryStoreCaptureMode>
@@ -85,6 +85,7 @@
     <Recovery>SIMPLE</Recovery>
     <EnableFullTextSearch>True</EnableFullTextSearch>
     <DefaultFilegroup>PRIMARY</DefaultFilegroup>
+    <DacVersion>1.0.1.0</DacVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -97,7 +98,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
     <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
